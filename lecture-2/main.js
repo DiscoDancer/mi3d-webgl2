@@ -17,12 +17,14 @@ const image = await imgload('img_016.dcm')
 //setup control object
 var minValue = Math.min(...image.pixelData)
 var maxValue = Math.max(...image.pixelData)
-const settings = {black: minValue, white: maxValue, zoom: 1};
+const settings = {black: minValue, white: maxValue, zoom: 1, image: 'Image1'};
 //create control interface
 const gui = new dat.GUI();
-gui.add(settings, 'black', minValue, maxValue);
-gui.add(settings, 'white', minValue, maxValue);
-gui.add(settings, 'zoom', 0.5, 2, .1);
+gui.add(settings, 'image', { Image1: 'Image1', Image2: 'Image2', Image3: 'Image3' })
+.listen()
+.onChange(() => {
+    alert(settings.image);
+});
 
 
 const {gl, pr, vao, bwLocation, transformLocation, texLocation, lutLocation} = init()
