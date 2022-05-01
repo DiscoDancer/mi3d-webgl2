@@ -13,7 +13,10 @@ const vsSource = await (await fetch('vs.fx')).text();
 const fsSource = await (await fetch('fs.fx')).text();;
 
 //Image load
-const image = await imgload('HEAD_BRAIN_20101020_001_004_T2__Ax_T2_Flair_Ax.img')
+// const image = await imgload('HEAD_BRAIN_20101020_001_004_T2__Ax_T2_Flair_Ax.img')
+ const image = await imgload('HEAD_BRAIN.img')
+// const image = await imgload('BRAIN_MR.img');
+// const image = await imgload('avg.img');
 
 //setup control object
 var minValue = 0;// Math.min(...image.pixelData)
@@ -28,9 +31,7 @@ const gui = new dat.GUI();
 gui.add(settings, 'black', minValue, maxValue);
 gui.add(settings, 'white', minValue, maxValue);
 gui.add(settings, 'distance', 100, 1000, 1);
-gui.add(sliceX, 'disp', -100, 100, 1);
-gui.add(sliceY, 'disp', -100, 100, 1);
-gui.add(sliceZ, 'disp', -100, 100, 1);
+
 
 const sliceZ = {
     xort: [1, 0, 0],
@@ -47,6 +48,10 @@ const sliceY = {
     yort: [0, 0, 1],
     disp: 0 //displacement from center of the image in mm!!!
 }
+
+gui.add(sliceX, 'disp', -100, 100, 1);
+gui.add(sliceY, 'disp', -100, 100, 1);
+gui.add(sliceZ, 'disp', -100, 100, 1);
 
 const { gl, pr, vao, bwLocation, transformLocation, texLocation, lutLocation, wvpLocation } = init()
 render()
