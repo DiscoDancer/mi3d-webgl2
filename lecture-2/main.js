@@ -8,6 +8,13 @@ import * as glutils from './glutils.js'
 import { imgload } from './imgload.js';
 
 
+/**
+ * В общем и целом, мы читаем 2 картинки, одна из которых dicom. С последней нужно работать чуть сложнее.
+ * Рисуем какую-то комбинацию из 2х картинок
+ * Рисуем картинку через 2 треугольника.
+ */
+
+
 const vsSource = await (await fetch('vs.fx')).text();
 const fsSource = await (await fetch('fs.fx')).text();;
 
@@ -45,22 +52,25 @@ function init() {
     }
     var ext = gl.getExtension('OES_texture_float_linear');
 
-    //-compile source code into shaders
+    // каждая программа состоит из 2х шейдеров, ничего интересного тут
     var vs = glutils.createShader(gl, gl.VERTEX_SHADER, vsSource);
-    var fs = glutils.createShader(gl, gl.FRAGMENT_SHADER, fsSource);
-    //-assemble shaders into program (pipeline)                                                                                
+    var fs = glutils.createShader(gl, gl.FRAGMENT_SHADER, fsSource);                                                                            
     var pr = glutils.createProgram(gl, vs, fs);
     
-    var positionAttributeLocation = gl.getAttribLocation(pr, "a_position");
-    var texLocation = gl.getUniformLocation(pr, "u_texture");
-    var lutLocation = gl.getUniformLocation(pr, "u_lut");
-    var bwLocation = gl.getUniformLocation(pr, "bw");
-    var transformLocation = gl.getUniformLocation(pr, "transform");
+    // Attributes are used to specify how to pull data out of your buffers and provide them to your vertex shader.
+    var positionAttributeLocation = gl.getAttribLocation(pr, "a_position"); // vertex shader
+    // uniform - глобальаня переменная
+    var texLocation = gl.getUniformLocation(pr, "u_texture"); // fragment shader
+    var lutLocation = gl.getUniformLocation(pr, "u_lut"); // fragment shader
+    var bwLocation = gl.getUniformLocation(pr, "bw"); // fragment shader
+    var transformLocation = gl.getUniformLocation(pr, "transform"); // vertex shader
 
-    //Init texture
-    //-init texture object and fill with data
+
+    // создаем текстуру из картинки DCOM
+    // creates WebGLTexture object
     var texture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.bindTexture(gl.TEXTURE_2D, texture); // либо к 2д, либо к кубу
+    // texImage2D(target, level, internalformat, width, height, border, format, type, source)
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.R32F, image.columns, image.rows, 0, gl.RED, gl.FLOAT, image.pixelData);
 
     //-setup texture interpolation and wrapping modes
@@ -69,12 +79,15 @@ function init() {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
+    // создали еще 1 текстуру из картинки
+    // только каким-то другим способом, мб эквивателным
     var lut = gl.createTexture();
     var lutimage = new Image();
     lutimage.src = 'lut/lut.png'
     lutimage.onload = function() {
 		gl.activeTexture(gl.TEXTURE1);
 		gl.bindTexture(gl.TEXTURE_2D, lut);
+        // texImage2D(target, level, internalformat, format, type, pixels)
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, lutimage);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
@@ -93,6 +106,8 @@ function init() {
         0, 1, 2, 
         0, 3, 2
     ]
+
+    // возможно мы тут просто определились с вершинами, передав в vertext shader geometry и triangles
 
     //-create vertex array to store geometry data
     var vao = gl.createVertexArray();
@@ -149,11 +164,4 @@ function render() {
 
     requestAnimationFrame(render)
 }
-
-
-
-
-
-
-
 
