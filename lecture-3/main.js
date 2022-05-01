@@ -19,7 +19,8 @@ const image = await imgload('HEAD_BRAIN_20101020_001_004_T2__Ax_T2_Flair_Ax.img'
 var minValue = 0;// Math.min(...image.pixelData)
 var maxValue = 1000; //Math.max(...image.pixelData)
 const settings = {
-    black: minValue, white: maxValue, zoom: 1,
+    black: minValue,
+    white: maxValue,
     distance: 2000
 };
 //create control interface
@@ -27,7 +28,6 @@ const gui = new dat.GUI();
 gui.add(settings, 'black', minValue, maxValue);
 gui.add(settings, 'white', minValue, maxValue);
 gui.add(settings, 'distance', 100, 1000, 1);
-gui.add(settings, 'zoom', 0.5, 2, .1);
 
 const sliceZ = {
     xort: [1, 0, 0],
@@ -49,7 +49,7 @@ gui.add(sliceX, 'disp', -100, 100, 1);
 gui.add(sliceY, 'disp', -100, 100, 1);
 gui.add(sliceZ, 'disp', -100, 100, 1);
 
-const {gl, pr, vao, bwLocation, transformLocation, texLocation, lutLocation, wvpLocation} = init()
+const { gl, pr, vao, bwLocation, transformLocation, texLocation, lutLocation, wvpLocation } = init()
 render()
 
 function init() {
@@ -60,7 +60,7 @@ function init() {
 
     //get WebGL2 darwing context and exit if not found
     const gl = c.getContext("webgl2")
-    if(gl == null) {
+    if (gl == null) {
         alert("Context not found");
         throw "Context not found";
     }
@@ -71,7 +71,7 @@ function init() {
     var fs = glutils.createShader(gl, gl.FRAGMENT_SHADER, fsSource);
     //-assemble shaders into program (pipeline)                                                                                
     var pr = glutils.createProgram(gl, vs, fs);
-    
+
     var positionAttributeLocation = gl.getAttribLocation(pr, "a_position");
     var texLocation = gl.getUniformLocation(pr, "u_texture");
     var lutLocation = gl.getUniformLocation(pr, "u_lut");
@@ -95,9 +95,9 @@ function init() {
     var lut = gl.createTexture();
     var lutimage = new Image();
     lutimage.src = 'lut/lut.png'
-    lutimage.onload = function() {
-		gl.activeTexture(gl.TEXTURE1);
-		gl.bindTexture(gl.TEXTURE_2D, lut);
+    lutimage.onload = function () {
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, lut);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, lutimage);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
@@ -106,14 +106,14 @@ function init() {
     }
 
     const geometry = [
-        0, 0, 
+        0, 0,
         1, 0,
         1, 1,
         0, 1
     ]
 
     const triangles = [
-        0, 1, 2, 
+        0, 1, 2,
         0, 3, 2
     ]
 
@@ -139,23 +139,23 @@ function init() {
     //enable scsissor to prevent clearing of other viewports
     gl.enable(gl.SCISSOR_TEST);
 
-    return {gl, pr, vao, bwLocation, transformLocation, texLocation, lutLocation, wvpLocation}
+    return { gl, pr, vao, bwLocation, transformLocation, texLocation, lutLocation, wvpLocation }
 }
 
 function render() {
     var vwp = mat4.create()
     mat4.scale(vwp, vwp, [2, 2, 1])
     mat4.translate(vwp, vwp, [-.5, -.5, 0])
-    let aspect = initViewport({x: 0, y: 0, width: gl.canvas.width / 2, height: gl.canvas.height / 3})
+    let aspect = initViewport({ x: 0, y: 0, width: gl.canvas.width / 2, height: gl.canvas.height / 3 })
     renderWithParameters(aspect, vwp, sliceZ)
-    aspect = initViewport({x: 0, y: gl.canvas.height / 3, width: gl.canvas.width / 2, height: gl.canvas.height / 3})
+    aspect = initViewport({ x: 0, y: gl.canvas.height / 3, width: gl.canvas.width / 2, height: gl.canvas.height / 3 })
     renderWithParameters(aspect, vwp, sliceX)
-    aspect = initViewport({x: 0, y: 2 * gl.canvas.height / 3, width: gl.canvas.width / 2, height: gl.canvas.height / 3})
+    aspect = initViewport({ x: 0, y: 2 * gl.canvas.height / 3, width: gl.canvas.width / 2, height: gl.canvas.height / 3 })
     renderWithParameters(aspect, vwp, sliceY)
 
-    let aspect3d = initViewport({x: gl.canvas.width / 2, y: 0, width: gl.canvas.width / 2, height: gl.canvas.height})
+    let aspect3d = initViewport({ x: gl.canvas.width / 2, y: 0, width: gl.canvas.width / 2, height: gl.canvas.height })
     renderWithParameters(aspect, worldViewProjection(aspect, sliceZ), sliceZ)
-    
+
     renderWithParameters(aspect, worldViewProjection(aspect, sliceX), sliceX)
 
     renderWithParameters(aspect, worldViewProjection(aspect, sliceY), sliceY)
@@ -175,7 +175,7 @@ function initViewport(region) {
     return region.width / region.height;
 }
 
-function renderWithParameters(aspect, wvp, slice){
+function renderWithParameters(aspect, wvp, slice) {
     //use graphic pipeline defined by shader program *pr*
     gl.useProgram(pr);
     //set geometry to draw
@@ -184,20 +184,20 @@ function renderWithParameters(aspect, wvp, slice){
     gl.uniform2fv(bwLocation, [settings.black, settings.white]);
 
     var imgSize = [
-        image.columns * image.pixelSpacingX, 
-        image.rows * image.pixelSpacingY, 
+        image.columns * image.pixelSpacingX,
+        image.rows * image.pixelSpacingY,
         image.slices * image.pixelSpacingZ]
 
     const world = worldSlice(aspect, slice)
     const scaling = mat4.invert(mat4.create(), mat4.fromScaling(mat4.create(), imgSize))
     const trans = mat4.fromTranslation(mat4.create(), [.5, .5, .5])
-    
+
     mat4.mul(world, scaling, world)
     mat4.mul(world, trans, world)
 
     gl.uniformMatrix4fv(transformLocation, false, world);
-	gl.uniform1i(texLocation, 0);
-	gl.uniform1i(lutLocation, 1);
+    gl.uniform1i(texLocation, 0);
+    gl.uniform1i(lutLocation, 1);
 
     gl.uniformMatrix4fv(wvpLocation, false, wvp);
 
@@ -220,10 +220,10 @@ function worldSlice(aspect, slice) {
     let world = mat4.create()
 
     var imgSize = [
-        image.columns * image.pixelSpacingX, 
-        image.rows * image.pixelSpacingY, 
+        image.columns * image.pixelSpacingX,
+        image.rows * image.pixelSpacingY,
         image.slices * image.pixelSpacingZ]
-    
+
     var maxSize = Math.max(...imgSize);
     mat4.mul(world, sliceTransform(slice), world);
     mat4.scale(world, world, [maxSize * aspect, maxSize, 1]);
