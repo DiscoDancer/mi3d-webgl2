@@ -28,6 +28,9 @@ const gui = new dat.GUI();
 gui.add(settings, 'black', minValue, maxValue);
 gui.add(settings, 'white', minValue, maxValue);
 gui.add(settings, 'distance', 100, 1000, 1);
+gui.add(sliceX, 'disp', -100, 100, 1);
+gui.add(sliceY, 'disp', -100, 100, 1);
+gui.add(sliceZ, 'disp', -100, 100, 1);
 
 const sliceZ = {
     xort: [1, 0, 0],
@@ -44,10 +47,6 @@ const sliceY = {
     yort: [0, 0, 1],
     disp: 0 //displacement from center of the image in mm!!!
 }
-
-gui.add(sliceX, 'disp', -100, 100, 1);
-gui.add(sliceY, 'disp', -100, 100, 1);
-gui.add(sliceZ, 'disp', -100, 100, 1);
 
 const { gl, pr, vao, bwLocation, transformLocation, texLocation, lutLocation, wvpLocation } = init()
 render()
@@ -240,11 +239,3 @@ function worldViewProjection(aspect, slice) {
     mat4.mul(vwp, vwp, worldSlice(aspect, slice));
     return vwp
 }
-
-
-
-
-
-
-
-
