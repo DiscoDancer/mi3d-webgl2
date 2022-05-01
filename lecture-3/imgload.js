@@ -40,6 +40,9 @@ export async function imgload(url) {
         };
         img.pixelData = new Uint8Array(bufferArray.buffer, 0, img.rows * img.columns * img.slices);
     }
+    else {
+        throw new Error("Unsupported file");
+    }
 
     return parseByteArray(img);
 }
