@@ -10,13 +10,15 @@ import { imgload } from './imgload.js';
 
 
 const vsSource = await (await fetch('vs.fx')).text();
-const fsSource = await (await fetch('fs.fx')).text();;
+const fsSource = await (await fetch('fs.fx')).text();
 
 //Image load
 // const image = await imgload('HEAD_BRAIN_20101020_001_004_T2__Ax_T2_Flair_Ax.img')
- const image = await imgload('HEAD_BRAIN.img')
-// const image = await imgload('BRAIN_MR.img');
-// const image = await imgload('avg.img');
+const image1 = await imgload('HEAD_BRAIN.img');
+const image2 = await imgload('BRAIN_MR.img');
+const image3 = await imgload('avg.img');
+
+let image = image1;
 
 //setup control object
 var minValue = 0;// Math.min(...image.pixelData)
@@ -24,10 +26,12 @@ var maxValue = 1000; //Math.max(...image.pixelData)
 const settings = {
     black: minValue,
     white: maxValue,
-    distance: 2000
+    distance: 2000,
+    image: "HEAD_BRAIN.img",
 };
 //create control interface
 const gui = new dat.GUI();
+gui.add(settings, 'image', {'HEAD_BRAIN.img':'HEAD_BRAIN.img', 'BRAIN_MR.img': 'BRAIN_MR.img', 'avg.img': 'avg.img'});
 gui.add(settings, 'black', minValue, maxValue);
 gui.add(settings, 'white', minValue, maxValue);
 gui.add(settings, 'distance', 100, 1000, 1);
