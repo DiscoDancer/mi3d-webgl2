@@ -31,7 +31,9 @@ const settings = {
 };
 //create control interface
 const gui = new dat.GUI();
-gui.add(settings, 'image', {'HEAD_BRAIN.img':'HEAD_BRAIN.img', 'BRAIN_MR.img': 'BRAIN_MR.img', 'avg.img': 'avg.img'});
+gui.add(settings, 'image', { 'HEAD_BRAIN.img': 'HEAD_BRAIN.img', 'BRAIN_MR.img': 'BRAIN_MR.img', 'avg.img': 'avg.img' }).listen().onChange(() => {
+    image = image2;
+});
 gui.add(settings, 'black', minValue, maxValue);
 gui.add(settings, 'white', minValue, maxValue);
 gui.add(settings, 'distance', 100, 1000, 1);
