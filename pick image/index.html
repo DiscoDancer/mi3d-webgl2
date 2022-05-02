@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Test WebGL application</title>
+  <style media="screen">
+    body {
+      position: absolute;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    canvas {
+      position: relative;
+      display: block;
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      background: lightgray;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="content">
+
+    <h3 id="headline">WebGL Multi-texture Demo</h3>
+
+    <div id="canvas-holder">
+      <canvas id="webglcanvas" width="400" height="400"></canvas>
+    </div>
+
+    <div id="tools">
+      <p>
+        <label><b>Texture #1:</b><br>
+          <select id="textureChoice1">
+            <option value="6">Brick</option>
+            <option value="7">Gradient</option>
+            <option value="8">Cloth</option>
+            <option value="9">Cloud</option>
+            <option value="10">Jigsaw</option>
+            <option value="5">Mandelbrot</option>
+          </select></label>
+      </p>
+      <p>
+        <label><b>Texture #2:</b><br>
+          <select id="textureChoice2">
+            <option value="1">Earth</option>
+            <option value="2">Night Earth</option>
+            <option value="0">House</option>
+            <option value="3">Marble</option>
+            <option value="4">Metal</option>
+            <option value="5">Mandelbrot</option>
+          </select></label>
+      </p>
+      <p>
+        <label>Mode:<br>
+          <select id="modeChoice">
+            <option value="0">Multiply</option>
+            <option value="1">Average</option>
+            <option value="2">Subtract</option>
+            <option value="3">Replace</option>
+            <option value="4">Ignore</option>
+          </select>
+        </label>
+      </p>
+      <p>
+        <label>Object:<br>
+          <select id="objectChoice">
+            <option>Square</option>
+            <option>Ring</option>
+          </select>
+        </label>
+      </p>
+      <p>
+        <label><input type="checkbox" id="wavyCheckbox">Wavy Texture</label>
+      </p>
+    </div>
+
+  </div>
+
+
+
+  <div id="help-content" style="display:none">
+    <h3>About this demo...</h3>
+    <p>This WebGL demo uses two textures in the same shader program. To do
+      this, it uses two texture units, and it used two sampler variables in
+      the shader. One texture provides a basic color for the image. That
+      basic color can then be modified by the color from the second texture.</p>
+    <p>The "Mode" popup menu sets the formula that is used to combine the
+      colors from the two textures. The values can be multiplied, they can
+      be averaged, or the second color can be subtracted from the first.
+      Use the "Replace" mode to see the second texture with no contribution
+      from the first texture. Use the "Ignore" mode to see the first texture
+      with no contribution from the second.</p>
+    <p>The program uses 11 texture images. Each texture has been loaded
+      into its own VBO. So, to change from one texture to another, it is
+      only necessary to bind a different buffer. The values of the
+      sampler variables are set to 0 and 1 during initialization and are
+      never changed, since the same two texture units are used in all cases;
+      only the VBOs that are bound to the texture units are changed.</p>
+    <p>One of the images (Mandelbrot) can be
+      used as either the first texture or the second texture; this is done
+      just to demonstrate that you can use the same texture VBO with two
+      texture units, even at the same time.</p>
+    <p>The texture can be displayed either on a square or on a ring. When
+      the ring is used, four copies of the texture are shown around the ring.</p>
+    <p>When the "Wavy" checkbox is checked, a distortion is applied to the
+      texture. This is done by modifying the texture coordinates, by the
+      formula: texCoords.y += 0.25 * sin(6.28*texCoords.x).
+      This can be thought of as a non-linear texture transformation.
+    </p>
+  </div>
+
+
+
+  <!-- support for help text -- do not change. -->
+  <div id="help-icon">
+    <img src="../image/question32.png" onclick="showDemoHelp()" title="Click here for information about this demo."
+      width="32" height="32">
+  </div>
+  <div id="hide-help-icon">
+    <img src="../image/close32.png" onclick="showDemoHelp()" title="Click here to return to the demo." width="65"
+      height="32">
+  </div>
+  <div id="helpBG" style="display:none"></div>
+  <script src="main.js" type="module"></script>
+
+</body>
+
+</html>
