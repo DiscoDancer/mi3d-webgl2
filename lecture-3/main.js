@@ -33,6 +33,16 @@ const settings = {
 const gui = new dat.GUI();
 gui.add(settings, 'image', { 'HEAD_BRAIN.img': 'HEAD_BRAIN.img', 'BRAIN_MR.img': 'BRAIN_MR.img', 'avg.img': 'avg.img' }).listen().onChange(() => {
     image = image2;
+    var texture = gl.createTexture();
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_3D, texture);
+    gl.texImage3D(gl.TEXTURE_3D, 0, gl.R32F, image.columns, image.rows, image.slices, 0, gl.RED, gl.FLOAT, image.pixelData);
+
+    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);
 });
 gui.add(settings, 'black', minValue, maxValue);
 gui.add(settings, 'white', minValue, maxValue);
