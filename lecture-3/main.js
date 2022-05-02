@@ -6,23 +6,27 @@ const vec3 = window.glMatrix.vec3
 
 //Import utility functions
 import * as glutils from './glutils.js'
-import { imgload } from './imgload.js';
+import { imgload, getFilePaths } from './imgload.js';
 
 
 const vsSource = await (await fetch('vs.fx')).text();
 const fsSource = await (await fetch('fs.fx')).text();
 
 //Image load
-// const image = await imgload('HEAD_BRAIN_20101020_001_004_T2__Ax_T2_Flair_Ax.img')
-const image1 = await imgload('HEAD_BRAIN.img');
-const image2 = await imgload('BRAIN_MR.img');
-const image3 = await imgload('avg.img');
+const paths = getFilePaths();
+const image1 = await imgload(paths[0]);
+const image2 = await imgload(paths[1]);
+const image3 = await imgload(paths[2]);
+const images = {};
+images[paths[0]] = paths[0];
+images[paths[1]] = paths[1];
+images[paths[2]] = paths[2];
 
 let image = image1;
 
 //setup control object
-var minValue = 0;// Math.min(...image.pixelData)
-var maxValue = 1000; //Math.max(...image.pixelData)
+var minValue = 0;
+var maxValue = 1000;
 const settings = {
     black: minValue,
     white: maxValue,
@@ -31,8 +35,21 @@ const settings = {
 };
 //create control interface
 const gui = new dat.GUI();
-gui.add(settings, 'image', { 'HEAD_BRAIN.img': 'HEAD_BRAIN.img', 'BRAIN_MR.img': 'BRAIN_MR.img', 'avg.img': 'avg.img' }).listen().onChange(() => {
-    image = image2;
+gui.add(settings, 'image', images).listen().onChange(() => {
+    switch (settings.image) {
+        case paths[0]:
+            image = image1;
+            break;
+        case paths[1]:
+            image = image2;
+            break;
+        case paths[2]:
+            image = image3;
+            break;
+        default:
+            throw new Error("unsupported case");
+    }
+
     var texture = gl.createTexture();
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_3D, texture);

@@ -1,3 +1,11 @@
+export function getFilePaths() {
+    return [
+        "HEAD_BRAIN.img",
+        "BRAIN_MR.img",
+        "avg.img",
+    ];
+}
+
 export async function imgload(url) {
     const response = await fetch(url)
     const buffer = await response.arrayBuffer();
